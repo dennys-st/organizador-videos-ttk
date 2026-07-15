@@ -72,6 +72,7 @@ export async function saveVideo(videoData) {
       description: videoData.description || '',
       status: videoData.status || 'pending', // 'pending' | 'downloaded' | 'posted'
       platforms: videoData.platforms || [], // ['tiktok', 'instagram', 'youtube']
+      user: videoData.user || 'geral', // 'juliano' | 'dennys' | 'renato' | 'geral'
       scheduledAt: videoData.scheduledAt || '',
       videoBlob: videoData.videoBlob || null,
       videoType: videoData.videoType || '',

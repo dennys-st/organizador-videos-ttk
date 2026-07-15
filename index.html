@@ -6,7 +6,7 @@
   <title>Organizador de Vídeos - TikTok & Reels</title>
   
   <!-- Estilos CSS -->
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=20">
   
   <!-- Biblioteca de Ícones Lucide -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -20,13 +20,28 @@
         <div class="brand" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
           <div class="brand-icon" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem;">V</div>
           <span class="brand-text" style="font-weight: 700; font-size: 1.25rem; background: linear-gradient(to right, #ffffff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VideoFlow</span>
+          <span class="panel-badge" id="active-panel-badge" style="display: none; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #c084fc; padding: 0.15rem 0.65rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.25rem;">Painel Geral</span>
         </div>
         <h1>Organizador de Vídeos</h1>
         <p>Gerencie, prepare e acompanhe suas postagens locais</p>
       </div>
-      <button class="btn btn-primary" id="btn-add-video">
-        <i data-lucide="plus"></i> Adicionar Vídeo
-      </button>
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <!-- Seletor de Painel (Usuário) -->
+        <div class="user-switcher-container" style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 0.4rem 0.85rem; border-radius: 8px; transition: var(--transition-smooth);">
+          <i data-lucide="users" style="width: 15px; height: 15px; color: var(--text-secondary);"></i>
+          <select id="user-switcher" class="select-custom" style="background: transparent; border: none; padding: 0 1.5rem 0 0; margin: 0; font-size: 0.85rem; font-weight: 500; outline: none; cursor: pointer; color: var(--text-primary);">
+            <option value="geral">Geral (Todos)</option>
+            <option value="user1">User 1</option>
+            <option value="user2">User 2</option>
+            <option value="user3">User 3</option>
+            <option value="hashtags">#Hashtags</option>
+          </select>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-add-video">
+          <i data-lucide="plus"></i> Adicionar Vídeo
+        </button>
+      </div>
     </header>
 
     <!-- Estatísticas Rápidas -->
@@ -83,7 +98,234 @@
       </div>
     </section>
 
+    <!-- Seção de Hashtags (Exibida apenas quando a rota for #Hashtags) -->
+    <section id="hashtags-section" style="display: none;">
+      <div class="hashtags-container" style="display: flex; flex-direction: column; gap: 2.25rem;">
+        
+        <!-- Cabeçalho Principal -->
+        <div class="hashtags-header" style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.75rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem;">
+          <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;">#</div>
+          <div>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">Biblioteca de Hashtags & Legendas</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Analise as coleções de alto desempenho e copie legendas estruturadas com apenas um toque.</p>
+          </div>
+        </div>
 
+        <!-- Cards de Análise e Dicas (Topo) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <!-- Card de Análise -->
+          <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; gap: 1rem; align-items: flex-start;">
+            <i data-lucide="line-chart" style="width: 24px; height: 24px; color: #f472b6; flex-shrink: 0; margin-top: 0.2rem;"></i>
+            <div>
+              <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Análise de Audiência (Globo)</h4>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.45;">Como <strong>#tvglobo</strong>, <strong>#globoplay</strong> e <strong>#giovannaantonelli</strong> performaram muito bem, o público demonstra forte interesse por novelas, artistas conhecidos, romances e entretenimento da TV Globo.</p>
+            </div>
+          </div>
+          
+          <!-- Card de Dica de Uso -->
+          <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; gap: 1rem; align-items: flex-start;">
+            <i data-lucide="info" style="width: 24px; height: 24px; color: #3b82f6; flex-shrink: 0; margin-top: 0.2rem;"></i>
+            <div>
+              <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Fórmula de Engajamento</h4>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.45;">Use entre <strong>6 e 12 hashtags</strong> por vídeo, alternando os nomes das atrizes. <strong>Importante:</strong> evite acumular todas em uma única publicação para não saturar o algoritmo.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Colunas de Hashtags por Categoria (Lado a Lado) -->
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="hash" style="width: 20px; color: #f472b6;"></i> Grupos de Hashtags por Categoria
+          </h3>
+          <div class="hashtags-categories-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Coluna 1: Baseadas nas que performaram bem -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;">
+              <div>
+                <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="background: rgba(16, 185, 129, 0.1); color: #34d399; width: 8px; height: 8px; border-radius: 50%;"></span>
+                  Melhor Performance
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Tags de atores, novelas e canais Globo que apresentaram alto alcance.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-right: 0.25rem; margin-bottom: 0.5rem;">
+                  <span class="tag-badge">#tvglobo</span>
+                  <span class="tag-badge">#globoplay</span>
+                  <span class="tag-badge">#globoplaynovelas</span>
+                  <span class="tag-badge">#gshow</span>
+                  <span class="tag-badge">#novelasglobo</span>
+                  <span class="tag-badge">#novela</span>
+                  <span class="tag-badge">#novelasbrasileiras</span>
+                  <span class="tag-badge">#teledramaturgia</span>
+                  <span class="tag-badge">#atoresglobo</span>
+                  <span class="tag-badge">#atrizesglobo</span>
+                  <span class="tag-badge">#giovannaantonelli</span>
+                  <span class="tag-badge">#gloriapires</span>
+                  <span class="tag-badge">#claudiaraia</span>
+                  <span class="tag-badge">#susvieira</span>
+                  <span class="tag-badge">#christianetorloni</span>
+                  <span class="tag-badge">#paollaoliveira</span>
+                  <span class="tag-badge">#reginacase</span>
+                  <span class="tag-badge">#sophiecharlotte</span>
+                  <span class="tag-badge">#alinemoraes</span>
+                  <span class="tag-badge">#nathaliadill</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-copy-tags" data-tags="#tvglobo #globoplay #globoplaynovelas #gshow #novelasglobo #novela #novelasbrasileiras #teledramaturgia #atoresglobo #atrizesglobo #giovannaantonelli #gloriapires #claudiaraia #susvieira #christianetorloni #paollaoliveira #reginacase #sophiecharlotte #alinemoraes #nathaliadill" style="width: 100%; justify-content: center; background: var(--bg-secondary); border-color: rgba(255,255,255,0.08);">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Todas as Tags
+              </button>
+            </div>
+
+            <!-- Coluna 2: Baseadas na persona romântica -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;">
+              <div>
+                <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="background: rgba(236, 72, 153, 0.1); color: #f472b6; width: 8px; height: 8px; border-radius: 50%;"></span>
+                  Persona Romântica
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Tags emocionais de relacionamento voltadas para o público maduro.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-right: 0.25rem; margin-bottom: 0.5rem;">
+                  <span class="tag-badge">#mulheresmaduras</span>
+                  <span class="tag-badge">#mulhermadura</span>
+                  <span class="tag-badge">#romance</span>
+                  <span class="tag-badge">#amorverdadeiro</span>
+                  <span class="tag-badge">#relacionamento</span>
+                  <span class="tag-badge">#homemcarinhoso</span>
+                  <span class="tag-badge">#mensagemdeamor</span>
+                  <span class="tag-badge">#frasesdeamor</span>
+                  <span class="tag-badge">#carinho</span>
+                  <span class="tag-badge">#saudade</span>
+                  <span class="tag-badge">#conversa</span>
+                  <span class="tag-badge">#boanoiteamor</span>
+                  <span class="tag-badge">#minhadeusa</span>
+                  <span class="tag-badge">#mulheresbrasileiras</span>
+                  <span class="tag-badge">#solteiras</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-copy-tags" data-tags="#mulheresmaduras #mulhermadura #romance #amorverdadeiro #relacionamento #homemcarinhoso #mensagemdeamor #frasesdeamor #carinho #saudade #conversa #boanoiteamor #minhadeusa #mulheresbrasileiras #solteiras" style="width: 100%; justify-content: center; background: var(--bg-secondary); border-color: rgba(255,255,255,0.08);">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Todas as Tags
+              </button>
+            </div>
+
+            <!-- Coluna 3: Combinação pronta para testar -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem;">
+              <div>
+                <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; width: 8px; height: 8px; border-radius: 50%;"></span>
+                  Combinação Recomendada
+                </h4>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">O mix perfeito entre novelas da Globo e romance para os seus vídeos.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-right: 0.25rem; margin-bottom: 0.5rem;">
+                  <span class="tag-badge" style="border-color: rgba(139, 92, 246, 0.25); color: #a78bfa;">#tvglobo</span>
+                  <span class="tag-badge" style="border-color: rgba(139, 92, 246, 0.25); color: #a78bfa;">#globoplay</span>
+                  <span class="tag-badge" style="border-color: rgba(139, 92, 246, 0.25); color: #a78bfa;">#giovannaantonelli</span>
+                  <span class="tag-badge">#novelasglobo</span>
+                  <span class="tag-badge">#gshow</span>
+                  <span class="tag-badge">#atrizesglobo</span>
+                  <span class="tag-badge">#mulheresmaduras</span>
+                  <span class="tag-badge">#romance</span>
+                  <span class="tag-badge">#amorverdadeiro</span>
+                  <span class="tag-badge">#mensagemdeamor</span>
+                  <span class="tag-badge">#saudade</span>
+                  <span class="tag-badge">#carinho</span>
+                  <span class="tag-badge">#relacionamento</span>
+                  <span class="tag-badge">#conversa</span>
+                  <span class="tag-badge">#mulheresbrasileiras</span>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-copy-tags" data-tags="#tvglobo #globoplay #giovannaantonelli #novelasglobo #gshow #atrizesglobo #mulheresmaduras #romance #amorverdadeiro #mensagemdeamor #saudade #carinho #relacionamento #conversa #mulheresbrasileiras" style="width: 100%; justify-content: center; background: var(--bg-secondary); border-color: rgba(255,255,255,0.08);">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Todas as Tags
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3 Legendas Prontas (Lado a Lado) -->
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="text" style="width: 20px; color: #f472b6;"></i> Legendas Prontas para Publicar
+          </h3>
+          <div class="captions-side-by-side" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Legenda 1 -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Opção 1: Nostalgia e Romance</h4>
+                <div class="caption-block-text" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; margin-bottom: 1rem;">Quem mais aí se pega com saudade daquelas novelas inesquecíveis que marcaram a nossa vida? O amor verdadeiro e o carinho sempre vencem no final. ❤️✨ A atuação da Giovanna Antonelli é sempre incrível!
+
+#tvglobo #globoplay #giovannaantonelli #novelasglobo #gshow #atrizesglobo #mulheresmaduras #romance #amorverdadeiro #mensagemdeamor #saudade #carinho #relacionamento</div>
+              </div>
+              <button class="btn btn-primary btn-copy-caption-text" data-target-text="Quem mais aí se pega com saudade daquelas novelas inesquecíveis que marcaram a nossa vida? O amor verdadeiro e o carinho sempre vencem no final. ❤️✨ A atuação da Giovanna Antonelli é sempre incrível!&#10;&#10;#tvglobo #globoplay #giovannaantonelli #novelasglobo #gshow #atrizesglobo #mulheresmaduras #romance #amorverdadeiro #mensagemdeamor #saudade #carinho #relacionamento" style="width: 100%; justify-content: center;">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Legenda
+              </button>
+            </div>
+
+            <!-- Legenda 2 -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Opção 2: Valorização de Atrizes</h4>
+                <div class="caption-block-text" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; margin-bottom: 1rem;">Mulheres maduras, talentosas e cheias de brilho que comandam a tela e nossos corações! Impossível não se apaixonar por essa história de amor e dedicação. 🌹🥰 Qual atriz você acha mais incrível?
+
+#tvglobo #globoplay #atrizesglobo #novelasglobo #mulheresmaduras #romance #amorverdadeiro #carinho #mensagemdeamor #relacionamento #conversa #mulheresbrasileiras</div>
+              </div>
+              <button class="btn btn-primary btn-copy-caption-text" data-target-text="Mulheres maduras, talentosas e cheias de brilho que comandam a tela e nossos corações! Impossível não se apaixonar por essa história de amor e dedicação. 🌹🥰 Qual atriz você acha mais incrível?&#10;&#10;#tvglobo #globoplay #atrizesglobo #novelasglobo #mulheresmaduras #romance #amorverdadeiro #carinho #mensagemdeamor #relacionamento #conversa #mulheresbrasileiras" style="width: 100%; justify-content: center;">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Legenda
+              </button>
+            </div>
+
+            <!-- Legenda 3 -->
+            <div style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+              <div>
+                <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">Opção 3: Relacionamento e Conversa</h4>
+                <div class="caption-block-text" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; margin-bottom: 1rem;">Aquela dose diária de romance, drama e conversa boa que a gente ama acompanhar sobre nossas novelas favoritas! Qual cena mais te emocionou hoje? 📺💬
+
+#tvglobo #globoplay #giovannaantonelli #novelasglobo #gshow #atrizesglobo #mulheresmaduras #romance #amorverdadeiro #mensagemdeamor #saudade #carinho #relacionamento #conversa #mulheresbrasileiras</div>
+              </div>
+              <button class="btn btn-primary btn-copy-caption-text" data-target-text="Aquela dose diária de romance, drama e conversa boa que a gente ama acompanhar sobre nossas novelas favoritas! Qual cena mais te emocionou hoje? 📺💬&#10;&#10;#tvglobo #globoplay #giovannaantonelli #novelasglobo #gshow #atrizesglobo #mulheresmaduras #romance #amorverdadeiro #mensagemdeamor #saudade #carinho #relacionamento #conversa #mulheresbrasileiras" style="width: 100%; justify-content: center;">
+                <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Legenda
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Seção de Frequência de Tags e Customização (Base) -->
+        <div class="hashtags-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          <!-- Tags Frequência -->
+          <div class="hashtags-card" style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 1rem;">
+            <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+              <i data-lucide="bar-chart-2" style="width: 18px; color: #10b981;"></i> Frequência de Tags no seu Banco de Dados
+            </h4>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Hashtags identificadas nas descrições de todos os seus vídeos locais cadastrados:</p>
+            <div id="active-tags-frequency" style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-right: 0.25rem;">
+              <span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">Carregando tags...</span>
+            </div>
+          </div>
+
+          <!-- Customização -->
+          <div class="hashtags-card" style="background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 1rem;">
+            <h4 style="font-size: 1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+              <i data-lucide="plus-circle" style="width: 18px; color: #3b82f6;"></i> Criar Grupo Personalizado
+            </h4>
+            <form id="custom-hashtag-form" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <input type="text" class="form-control" id="custom-group-name" placeholder="Ex: Meu Nicho Tecnologia" required style="font-size: 0.85rem; padding: 0.5rem 0.75rem;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <textarea class="form-control" id="custom-group-tags" placeholder="Ex: #tech #setup #dev #javascript" rows="2" required style="font-size: 0.85rem; padding: 0.5rem 0.75rem; resize: none;"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="justify-content: center; font-size: 0.85rem; padding: 0.5rem;">
+                <i data-lucide="plus" style="width:14px; margin-right:4px;"></i> Adicionar Grupo
+              </button>
+            </form>
+            <div id="custom-groups-container" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+              <!-- Grupos criados pelo usuário -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
   </main>
 
   <!-- Slide-Over Backdrop para Cadastro/Edição de Vídeos -->
@@ -180,6 +422,17 @@
         </div>
       </div>
 
+      <!-- Destinar ao Usuário -->
+      <div class="form-group" id="user-group">
+        <label for="video-user-select">Destinar ao Usuário</label>
+        <select class="form-control" id="video-user-select">
+          <option value="geral">Geral (Todos)</option>
+          <option value="user1">User 1</option>
+          <option value="user2">User 2</option>
+          <option value="user3">User 3</option>
+        </select>
+      </div>
+
       <!-- Data de Agendamento -->
       <div class="form-group">
         <label for="video-schedule-input">Data e Hora de Postagem</label>
@@ -207,6 +460,6 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- Lógica da Aplicação -->
-  <script type="module" src="app.js?v=12"></script>
+  <script type="module" src="app.js?v=20"></script>
 </body>
 </html>

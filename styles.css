@@ -282,6 +282,25 @@ header {
 .stat-card.downloaded::before { background: var(--status-downloaded); }
 .stat-card.posted::before { background: var(--status-posted); }
 
+.tag-badge {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.tag-badge:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-active);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
 .stat-label {
   font-size: 0.85rem;
   color: var(--text-secondary);

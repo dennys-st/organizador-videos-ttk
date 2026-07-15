@@ -8,6 +8,7 @@ import {
 
 // Application State
 let currentFilter = 'all'; // 'all' | 'pending' | 'downloaded' | 'posted'
+let currentUser = 'geral'; // 'juliano' | 'dennys' | 'renato' | 'geral'
 let selectedVideoFile = null;
 let generatedThumbnail = null;
 let existingVideoBlob = null;
@@ -42,6 +43,7 @@ const elements = {
   videoUrlInput: document.getElementById('video-url-input'),
   capaUrlInput: document.getElementById('capa-url-input'),
   downloadUrlInput: document.getElementById('download-url-input'),
+  videoUserSelect: document.getElementById('video-user-select'),
   
   // Stats
   statTotal: document.getElementById('stat-total'),
@@ -51,6 +53,9 @@ const elements = {
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', async () => {
+  // Parse user route first
+  parseUserRoute();
+
   // Initialize Lucide icons
   lucide.createIcons();
   
@@ -112,6 +117,11 @@ function setupEventListeners() {
     resetForm();
     elements.slideOverTitle.textContent = 'Adicionar Novo Vídeo';
     elements.statusGroup.style.display = 'none';
+    
+    // Auto-select user based on active panel
+    if (elements.videoUserSelect) {
+      elements.videoUserSelect.value = currentUser;
+    }
     elements.slideOver.classList.add('active');
     elements.slideOverBackdrop.classList.add('active');
   };
@@ -179,6 +189,26 @@ function setupEventListeners() {
         mainHeader.scrollIntoView({ behavior: 'smooth' });
       }
     });
+  });
+
+  // Handle user switcher dropdown change
+  const userSwitcher = document.getElementById('user-switcher');
+  if (userSwitcher) {
+    userSwitcher.addEventListener('change', (e) => {
+      const selectedUser = e.target.value;
+      
+      // Update browser URL path dynamically (client-side only, no reload)
+      window.history.pushState(null, '', selectedUser === 'geral' ? '/' : `/${selectedUser}`);
+      
+      parseUserRoute();
+      loadAndRenderVideos();
+    });
+  }
+
+  // Handle popstate navigation (browser back/forward button clicks)
+  window.addEventListener('popstate', () => {
+    parseUserRoute();
+    loadAndRenderVideos();
   });
 }
 
@@ -282,6 +312,7 @@ function resetForm() {
   if (elements.videoUrlInput) elements.videoUrlInput.value = '';
   if (elements.capaUrlInput) elements.capaUrlInput.value = '';
   if (elements.downloadUrlInput) elements.downloadUrlInput.value = '';
+  if (elements.videoUserSelect) elements.videoUserSelect.value = 'geral';
   
   // Uncheck all platforms
   document.getElementById('platform-tiktok').checked = false;
@@ -324,10 +355,12 @@ async function handleFormSubmit(e) {
   saveBtn.textContent = 'Salvando...';
   
   try {
+    const user = elements.videoUserSelect ? elements.videoUserSelect.value : 'geral';
     const videoData = {
       title,
       description,
       platforms,
+      user,
       scheduledAt,
       videoUrl,
       capaUrl,
@@ -382,15 +415,35 @@ async function loadAndRenderVideos() {
     const statsGrid = document.querySelector('.stats-grid');
     const toolbar = document.querySelector('.toolbar');
 
-    // Restore dashboard view elements
-    if (statsGrid) statsGrid.style.display = 'grid';
-    if (toolbar) toolbar.style.display = 'flex';
-    elements.videoGrid.style.display = 'grid';
-    elements.btnAddVideo.style.display = 'inline-flex';
-    
-    // Restore header description
-    const subtitle = document.querySelector('header p');
-    if (subtitle) subtitle.textContent = 'Gerencie, prepare e acompanhe suas postagens locais';
+    const hashtagsSection = document.getElementById('hashtags-section');
+
+    if (currentUser === 'hashtags') {
+      // Hide dashboard view elements
+      if (statsGrid) statsGrid.style.display = 'none';
+      if (toolbar) toolbar.style.display = 'none';
+      elements.videoGrid.style.display = 'none';
+      elements.btnAddVideo.style.display = 'none';
+      if (hashtagsSection) hashtagsSection.style.display = 'block';
+      
+      // Update header description
+      const subtitle = document.querySelector('header p');
+      if (subtitle) subtitle.textContent = 'Gerencie suas coleções de tags para publicações rápidas';
+      
+      // Load and render hashtags page content
+      await loadAndRenderHashtagsPage();
+      return;
+    } else {
+      // Restore dashboard view elements
+      if (statsGrid) statsGrid.style.display = 'grid';
+      if (toolbar) toolbar.style.display = 'flex';
+      elements.videoGrid.style.display = 'grid';
+      elements.btnAddVideo.style.display = 'inline-flex';
+      if (hashtagsSection) hashtagsSection.style.display = 'none';
+      
+      // Restore header description
+      const subtitle = document.querySelector('header p');
+      if (subtitle) subtitle.textContent = 'Gerencie, prepare e acompanhe suas postagens locais';
+    }
 
     let allVideos = await getAllVideos();
 
@@ -400,6 +453,7 @@ async function loadAndRenderVideos() {
         title: 'Man_holding_glass_talking_202607122216',
         description: 'Legenda em breve',
         platforms: ['tiktok'],
+        user: 'geral',
         status: 'pending',
         videoUrl: 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev/Juliano/Man_holding_glass_talking_202607122216.mp4',
         capaUrl: '',
@@ -409,13 +463,14 @@ async function loadAndRenderVideos() {
       await saveVideo(demoVideo);
       allVideos = await getAllVideos();
     } else {
-      // Force update of the first demo video to use filename as title, keep TikTok only, and set description to 'Legenda em breve'
+      // Force update of the first demo video to use filename as title, keep TikTok only, set user to geral and set description to 'Legenda em breve'
       try {
         const demo = allVideos.find(v => v && v.id === 1);
-        if (demo && (demo.title !== 'Man_holding_glass_talking_202607122216' || (demo.platforms && demo.platforms.length > 1) || demo.description !== 'Legenda em breve')) {
+        if (demo && (demo.title !== 'Man_holding_glass_talking_202607122216' || (demo.platforms && demo.platforms.length > 1) || demo.description !== 'Legenda em breve' || demo.user !== 'geral')) {
           demo.title = 'Man_holding_glass_talking_202607122216';
           demo.platforms = ['tiktok'];
           demo.description = 'Legenda em breve';
+          demo.user = 'geral';
           await saveVideo(demo);
           allVideos = await getAllVideos();
         }
@@ -447,6 +502,11 @@ async function loadAndRenderVideos() {
       console.error('Erro no sync com localStorage:', syncError);
     }
     
+    // Filter raw list by active user page route first
+    if (currentUser !== 'geral') {
+      allVideos = allVideos.filter(v => v && v.user === currentUser);
+    }
+
     // Update Stats panel
     updateStats(allVideos);
     
@@ -652,6 +712,7 @@ function renderGrid(videos) {
         <div class="video-meta">
           ${dateHtml}
           <span>ID: #${video.id}</span>
+          ${video.user && video.user !== 'geral' ? `<span class="user-badge" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); color: #34d399; padding: 0.05rem 0.35rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: capitalize;">${video.user}</span>` : '<span class="user-badge" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary); padding: 0.05rem 0.35rem; border-radius: 4px; font-size: 0.7rem;">Geral</span>'}
         </div>
       </div>
       
@@ -882,4 +943,242 @@ function updateActiveCountdowns() {
       }
     }
   });
+}
+
+// Parse URL paths, query parameters, or hashes to resolve the active user
+function parseUserRoute() {
+  const path = window.location.pathname.replace(/^\/|\/$/g, '').toLowerCase();
+  const validUsers = ['user1', 'user2', 'user3', 'hashtags'];
+  
+  if (validUsers.includes(path)) {
+    currentUser = path;
+  } else {
+    // Check query params fallback: ?user=user1
+    const params = new URLSearchParams(window.location.search);
+    const queryUser = params.get('user')?.toLowerCase();
+    if (validUsers.includes(queryUser)) {
+      currentUser = queryUser;
+    } else {
+      // Check hash parameter fallback: #/user1
+      const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+      if (validUsers.includes(hash)) {
+        currentUser = hash;
+      } else {
+        currentUser = 'geral';
+      }
+    }
+  }
+
+  // Update Visual Active Panel Badge
+  const badgeEl = document.getElementById('active-panel-badge');
+  if (badgeEl) {
+    if (currentUser === 'geral') {
+      badgeEl.textContent = 'Painel Geral';
+      badgeEl.style.display = 'inline-block';
+      badgeEl.style.background = 'rgba(139, 92, 246, 0.15)';
+      badgeEl.style.color = '#c084fc';
+      badgeEl.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+    } else {
+      let nameCap = currentUser;
+      if (currentUser === 'user1') nameCap = 'User 1';
+      else if (currentUser === 'user2') nameCap = 'User 2';
+      else if (currentUser === 'user3') nameCap = 'User 3';
+      else nameCap = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
+      
+      badgeEl.textContent = `Painel de ${nameCap}`;
+      badgeEl.style.display = 'inline-block';
+      badgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
+      badgeEl.style.color = '#34d399';
+      badgeEl.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+    }
+  }
+
+  // Update Dropdown Switcher selection value
+  const userSwitcher = document.getElementById('user-switcher');
+  if (userSwitcher) {
+    userSwitcher.value = currentUser;
+  }
+}
+
+// Load, analyze hashtags frequency from db, and render copy sections
+async function loadAndRenderHashtagsPage() {
+  try {
+    const allVideos = await getAllVideos();
+    
+    // 1. Calculate tag frequencies
+    const tagCounts = {};
+    allVideos.forEach(video => {
+      if (video && video.description) {
+        // Regex to match hashtag pattern
+        const tags = video.description.match(/#[\wá-ú]+/gi) || [];
+        tags.forEach(tag => {
+          const lowerTag = tag.toLowerCase();
+          tagCounts[lowerTag] = (tagCounts[lowerTag] || 0) + 1;
+        });
+      }
+    });
+
+    // Sort tags by usage frequency
+    const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+
+    // Render tag frequency badges
+    const frequencyContainer = document.getElementById('active-tags-frequency');
+    if (frequencyContainer) {
+      frequencyContainer.innerHTML = '';
+      if (sortedTags.length === 0) {
+        frequencyContainer.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem; font-style: italic;">Nenhuma tag em uso nos vídeos cadastrados.</span>`;
+      } else {
+        sortedTags.forEach(([tag, count]) => {
+          const span = document.createElement('span');
+          span.className = 'platform-badge';
+          span.style.background = 'rgba(255,255,255,0.05)';
+          span.style.border = '1px solid rgba(255,255,255,0.1)';
+          span.style.color = 'var(--text-secondary)';
+          span.style.cursor = 'pointer';
+          span.style.padding = '0.35rem 0.65rem';
+          span.style.fontSize = '0.8rem';
+          span.style.borderRadius = '6px';
+          span.style.display = 'inline-flex';
+          span.style.alignItems = 'center';
+          span.style.gap = '0.25rem';
+          span.innerHTML = `${tag} <strong style="color: var(--accent-primary);">${count}</strong>`;
+          
+          span.title = 'Clique para copiar esta hashtag';
+          span.addEventListener('click', () => {
+            navigator.clipboard.writeText(tag)
+              .then(() => showToast(`Hashtag ${tag} copiada!`, 'success'))
+              .catch(() => showToast('Erro ao copiar.', 'error'));
+          });
+          frequencyContainer.appendChild(span);
+        });
+      }
+    }
+
+    // 2. Setup standard copy tags buttons
+    document.querySelectorAll('.btn-copy-tags').forEach(btn => {
+      // Remove any existing clone listeners by recreating buttons
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.addEventListener('click', () => {
+        const tags = newBtn.dataset.tags;
+        navigator.clipboard.writeText(tags)
+          .then(() => showToast('Grupo de tags copiado para a área de transferência!', 'success'))
+          .catch(() => showToast('Erro ao copiar tags.', 'error'));
+      });
+    });
+
+    // 3. Setup ready-made captions copy buttons
+    document.querySelectorAll('.btn-copy-caption-text').forEach(btn => {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.addEventListener('click', () => {
+        const text = newBtn.dataset.targetText;
+        navigator.clipboard.writeText(text)
+          .then(() => showToast('Legenda copiada para a área de transferência!', 'success'))
+          .catch(() => showToast('Erro ao copiar legenda.', 'error'));
+      });
+    });
+
+    // 4. Click on individual tag-badges to copy
+    document.querySelectorAll('.tag-badge').forEach(badge => {
+      badge.addEventListener('click', () => {
+        const tag = badge.textContent.trim();
+        navigator.clipboard.writeText(tag)
+          .then(() => showToast(`Hashtag ${tag} copiada!`, 'success'))
+          .catch(() => showToast('Erro ao copiar hashtag.', 'error'));
+      });
+    });
+
+    // 5. Render and handle custom hashtag groups
+    renderCustomHashtagGroups();
+
+    // 6. Setup Custom Hashtag Form submission
+    const customForm = document.getElementById('custom-hashtag-form');
+    if (customForm) {
+      customForm.onsubmit = (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('custom-group-name');
+        const tagsInput = document.getElementById('custom-group-tags');
+        
+        if (nameInput && tagsInput) {
+          const name = nameInput.value.trim();
+          let tags = tagsInput.value.trim();
+          
+          // Ensure tags start with #
+          const formattedTags = tags.split(/\s+/).map(t => t.startsWith('#') ? t : `#${t}`).join(' ');
+
+          if (name && formattedTags) {
+            const savedGroups = JSON.parse(localStorage.getItem('custom-hashtag-groups') || '[]');
+            savedGroups.push({ id: Date.now(), name, tags: formattedTags });
+            localStorage.setItem('custom-hashtag-groups', JSON.stringify(savedGroups));
+            
+            nameInput.value = '';
+            tagsInput.value = '';
+            
+            showToast('Grupo de hashtags criado com sucesso!', 'success');
+            renderCustomHashtagGroups();
+          }
+        }
+      };
+    }
+
+    lucide.createIcons();
+  } catch (error) {
+    console.error('Erro ao renderizar gerenciador de hashtags:', error);
+  }
+}
+
+// Render custom groups from localStorage
+function renderCustomHashtagGroups() {
+  const container = document.getElementById('custom-groups-container');
+  if (!container) return;
+
+  container.innerHTML = '';
+  const savedGroups = JSON.parse(localStorage.getItem('custom-hashtag-groups') || '[]');
+  
+  if (savedGroups.length === 0) {
+    container.innerHTML = `
+      <div style="background: rgba(255,255,255,0.01); border: 1px dashed rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; text-align: center; color: var(--text-muted); font-size: 0.8rem; font-style: italic;">
+        Nenhum grupo personalizado criado.
+      </div>
+    `;
+    return;
+  }
+
+  savedGroups.forEach(group => {
+    const item = document.createElement('div');
+    item.className = 'tag-group-item';
+    item.style.cssText = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; position: relative; margin-top: 0.5rem;';
+    item.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin: 0;">${group.name}</h4>
+        <button class="btn btn-sm btn-delete-group" data-id="${group.id}" style="padding: 2px 6px; background: transparent; border: none; color: #ef4444;" title="Excluir grupo">
+          <i data-lucide="trash-2" style="width:14px;"></i>
+        </button>
+      </div>
+      <p class="tag-text" style="color: var(--text-secondary); font-size: 0.8rem; font-family: monospace; word-break: break-all; margin-bottom: 0.75rem;">${group.tags}</p>
+      <button class="btn btn-sm btn-copy-custom-tags" data-tags="${group.tags}" style="width: 100%; justify-content: center; background: var(--bg-secondary);">
+        <i data-lucide="copy" style="width:14px; margin-right:4px;"></i> Copiar Tags
+      </button>
+    `;
+    
+    // Add delete listener
+    item.querySelector('.btn-delete-group').addEventListener('click', () => {
+      const updated = savedGroups.filter(g => g.id !== group.id);
+      localStorage.setItem('custom-hashtag-groups', JSON.stringify(updated));
+      showToast('Grupo de hashtags excluído.', 'info');
+      renderCustomHashtagGroups();
+    });
+
+    // Add copy listener
+    item.querySelector('.btn-copy-custom-tags').addEventListener('click', () => {
+      navigator.clipboard.writeText(group.tags)
+        .then(() => showToast(`Grupo "${group.name}" copiado!`, 'success'))
+        .catch(() => showToast('Erro ao copiar tags.', 'error'));
+    });
+
+    container.appendChild(item);
+  });
+  
+  lucide.createIcons();
 }
