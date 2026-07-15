@@ -1,0 +1,12 @@
+{
+  "name": "organizador-videos-ttk",
+  "version": "1.0.0",
+  "description": "Organizador local de videos para redes sociais",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y http-server -p 3000 -c-1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
