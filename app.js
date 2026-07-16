@@ -205,6 +205,16 @@ function setupEventListeners() {
     });
   }
 
+  // Handle logo click to return home
+  const brandLogo = document.getElementById('brand-logo');
+  if (brandLogo) {
+    brandLogo.addEventListener('click', () => {
+      window.history.pushState(null, '', '/');
+      parseUserRoute();
+      loadAndRenderVideos();
+    });
+  }
+
   // Handle popstate navigation (browser back/forward button clicks)
   window.addEventListener('popstate', () => {
     parseUserRoute();
@@ -417,6 +427,22 @@ async function loadAndRenderVideos() {
 
     const hashtagsSection = document.getElementById('hashtags-section');
 
+    // Update header Title (h1)
+    const titleEl = document.querySelector('header h1');
+    if (titleEl) {
+      if (currentUser === 'user1') {
+        titleEl.textContent = 'Letícia';
+      } else if (currentUser === 'user2') {
+        titleEl.textContent = 'Jaques';
+      } else if (currentUser === 'user3') {
+        titleEl.textContent = 'Isis';
+      } else if (currentUser === 'hashtags') {
+        titleEl.textContent = 'Biblioteca de Hashtags';
+      } else {
+        titleEl.textContent = 'Organizador de Vídeos';
+      }
+    }
+
     if (currentUser === 'hashtags') {
       // Hide dashboard view elements
       if (statsGrid) statsGrid.style.display = 'none';
@@ -442,7 +468,17 @@ async function loadAndRenderVideos() {
       
       // Restore header description
       const subtitle = document.querySelector('header p');
-      if (subtitle) subtitle.textContent = 'Gerencie, prepare e acompanhe suas postagens locais';
+      if (subtitle) {
+        if (currentUser === 'user1') {
+          subtitle.textContent = 'Gerencie, prepare e acompanhe as postagens de Letícia';
+        } else if (currentUser === 'user2') {
+          subtitle.textContent = 'Gerencie, prepare e acompanhe as postagens de Jaques';
+        } else if (currentUser === 'user3') {
+          subtitle.textContent = 'Gerencie, prepare e acompanhe as postagens de Isis';
+        } else {
+          subtitle.textContent = 'Gerencie, prepare e acompanhe suas postagens locais';
+        }
+      }
     }
 
     let allVideos = await getAllVideos();
@@ -1014,25 +1050,7 @@ function parseUserRoute() {
   // Update Visual Active Panel Badge
   const badgeEl = document.getElementById('active-panel-badge');
   if (badgeEl) {
-    if (currentUser === 'geral') {
-      badgeEl.textContent = 'Painel Geral';
-      badgeEl.style.display = 'inline-block';
-      badgeEl.style.background = 'rgba(139, 92, 246, 0.15)';
-      badgeEl.style.color = '#c084fc';
-      badgeEl.style.borderColor = 'rgba(139, 92, 246, 0.3)';
-    } else {
-      let nameCap = currentUser;
-      if (currentUser === 'user1') nameCap = 'User 1';
-      else if (currentUser === 'user2') nameCap = 'User 2';
-      else if (currentUser === 'user3') nameCap = 'User 3';
-      else nameCap = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
-      
-      badgeEl.textContent = `Painel de ${nameCap}`;
-      badgeEl.style.display = 'inline-block';
-      badgeEl.style.background = 'rgba(16, 185, 129, 0.15)';
-      badgeEl.style.color = '#34d399';
-      badgeEl.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-    }
+    badgeEl.style.display = 'none';
   }
 
   // Update Dropdown Switcher selection value

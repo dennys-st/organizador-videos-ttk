@@ -181,6 +181,13 @@ header {
   gap: 1rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .header-title h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -861,24 +868,244 @@ textarea.form-control {
 @media (max-width: 768px) {
   header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 1.5rem;
   }
+  
+  header > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .user-switcher-container {
+    flex-grow: 1;
+  }
+  
+  #btn-add-video {
+    flex-grow: 1;
+    justify-content: center;
+  }
+
   .toolbar {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
+    padding: 1.25rem;
   }
+  
   .search-box {
     max-width: none;
+    width: 100%;
   }
+  
   .filter-group {
-    justify-content: space-between;
+    width: 100%;
+    display: flex;
+    gap: 0.75rem;
   }
+  
   .select-custom {
-    flex-grow: 1;
+    flex: 1;
+    width: 50%;
   }
+  
   .slide-over {
     width: 100%;
     right: -100%;
+  }
+}
+
+@media (max-width: 480px) {
+  main {
+    padding: 1.25rem 1rem;
+  }
+  
+  .header-title h1 {
+    font-size: 1.65rem;
+  }
+  
+  .header-title p {
+    font-size: 0.85rem;
+  }
+  
+  header > div {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .user-switcher-container {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .user-switcher-container select {
+    flex-grow: 1;
+    text-align-last: center;
+  }
+  
+  #btn-add-video {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  /* Make the total card take full width in 2-column layout */
+  .stat-card.total {
+    grid-column: span 2;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .toolbar {
+    padding: 1rem;
+    border-radius: 14px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .filter-group .select-custom {
+    width: 100%;
+  }
+  
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .video-card {
+    border-radius: 14px;
+  }
+  
+  .video-card-body {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .video-title {
+    font-size: 1rem;
+  }
+  
+  .video-caption {
+    font-size: 0.8rem;
+    height: 2.4rem;
+  }
+  
+  .card-actions {
+    padding: 0 1rem 1rem 1rem;
+    gap: 0.4rem;
+  }
+  
+  .btn-card {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Form inside Slide-over styling */
+  .slide-over-header {
+    padding: 1.25rem 1rem;
+  }
+  
+  .slide-over-header h2 {
+    font-size: 1.15rem;
+  }
+  
+  .slide-over-body {
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+  }
+  
+  .platforms-selector {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .slide-over-footer {
+    padding: 1rem;
+  }
+  
+  /* Hashtags section optimizations */
+  .hashtags-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+  
+  .hashtags-header h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  .hashtags-header p {
+    font-size: 0.8rem !important;
+  }
+  
+  .hashtags-container {
+    gap: 1.5rem !important;
+  }
+  
+  /* Ensure copy container grids wrap perfectly */
+  .hashtags-categories-grid, 
+  .captions-side-by-side, 
+  .hashtags-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  .hashtags-categories-grid > div,
+  .captions-side-by-side > div,
+  .hashtags-grid > div {
+    padding: 1.25rem !important;
+  }
+  
+  .caption-block-text {
+    padding: 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1.5rem;
+  }
+  
+  .toast {
+    min-width: auto;
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  /* Force all inline-styled grid containers to collapse to 1 column on mobile */
+  #hashtags-section div[style*="display: grid"],
+  #hashtags-section div[style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }
 
