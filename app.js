@@ -744,9 +744,10 @@ function renderGrid(videos) {
     // Media preview html
     let mediaHtml = '';
     if (video.videoUrl) {
+      const videoSrc = video.videoUrl.includes('#') ? video.videoUrl : `${video.videoUrl}#t=0.001`;
       mediaHtml = `
-        <video poster="${video.capaUrl || ''}" preload="metadata">
-          <source src="${video.videoUrl}" type="video/mp4">
+        <video poster="${video.capaUrl || ''}" preload="metadata" playsinline muted>
+          <source src="${videoSrc}" type="video/mp4">
           Seu navegador não suporta a reprodução deste vídeo.
         </video>
         <div class="video-play-overlay">
@@ -755,9 +756,10 @@ function renderGrid(videos) {
       `;
     } else if (video.videoBlob) {
       const localUrl = URL.createObjectURL(video.videoBlob);
+      const videoSrc = `${localUrl}#t=0.001`;
       mediaHtml = `
-        <video poster="${video.thumbnail || ''}" preload="metadata">
-          <source src="${localUrl}" type="${video.videoType || 'video/mp4'}">
+        <video poster="${video.thumbnail || ''}" preload="metadata" playsinline muted>
+          <source src="${videoSrc}" type="${video.videoType || 'video/mp4'}">
         </video>
         <div class="video-play-overlay">
           <i data-lucide="play" class="play-icon"></i>
