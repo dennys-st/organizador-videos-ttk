@@ -746,7 +746,7 @@ function renderGrid(videos) {
     if (video.videoUrl) {
       const videoSrc = video.videoUrl.includes('#') ? video.videoUrl : `${video.videoUrl}#t=0.001`;
       mediaHtml = `
-        <video poster="${video.capaUrl || ''}" preload="metadata" playsinline muted>
+        <video poster="${video.capaUrl || ''}" preload="metadata" playsinline>
           <source src="${videoSrc}" type="video/mp4">
           Seu navegador não suporta a reprodução deste vídeo.
         </video>
@@ -758,7 +758,7 @@ function renderGrid(videos) {
       const localUrl = URL.createObjectURL(video.videoBlob);
       const videoSrc = `${localUrl}#t=0.001`;
       mediaHtml = `
-        <video poster="${video.thumbnail || ''}" preload="metadata" playsinline muted>
+        <video poster="${video.thumbnail || ''}" preload="metadata" playsinline>
           <source src="${videoSrc}" type="${video.videoType || 'video/mp4'}">
         </video>
         <div class="video-play-overlay">
