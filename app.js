@@ -479,6 +479,48 @@ async function loadAndRenderVideos() {
       }
     }
 
+    // --- TESTE SEGURO WORKER LETICIA: Injetar arquivos individuais no User 1 ---
+    const leticiaFiles = [
+      { name: "0702 (1)(3).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(3).mp4" },
+      { name: "0702 (1)(4).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(4).mp4" },
+      { name: "0702 (1)(6).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(6).mp4" },
+      { name: "0702 (1)(8).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(8).mp4" },
+      { name: "0710 (6)(1).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6)(1).mp4" },
+      { name: "0710 (6)(2).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6)(2).mp4" },
+      { name: "0710 (6).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6).mp4" },
+      { name: "Raimundo 1.mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2FRaimundo%201.mp4" }
+    ];
+
+    for (const file of leticiaFiles) {
+      const existing = allVideos.find(v => v.title === file.name && v.user === 'user1');
+      if (!existing) {
+        const newVideo = {
+          title: file.name,
+          description: '',
+          platforms: ['tiktok'],
+          user: 'user1',
+          status: 'pending',
+          videoUrl: file.url,
+          capaUrl: '',
+          downloadUrl: file.url,
+          createdAt: new Date().toISOString()
+        };
+        await saveVideo(newVideo);
+      } else if (existing.description === 'Vídeo da pasta Letícia (Cloudflare Worker)') {
+        existing.description = '';
+        await saveVideo(existing);
+      }
+    }
+    
+    // Remove the old HTML folder link if it exists
+    const oldFolderLink = allVideos.find(v => v.title === 'Pasta Leticia (Worker)');
+    if (oldFolderLink) {
+      await deleteVideo(oldFolderLink.id);
+    }
+    
+    allVideos = await getAllVideos();
+
+
     // Sync with localStorage (Check if 10 minutes have elapsed since download start)
     try {
       for (const video of allVideos) {
@@ -646,7 +688,7 @@ function renderGrid(videos) {
     } else if (isTimerActive) {
       statusClass = 'pending timer-active';
       statusText = `Baixando (${countdownText})`;
-      downloadBtnLabel = `<i data-lucide="loader-2" class="spin-icon"></i> Liberando em ${countdownText}`;
+      downloadBtnLabel = `<i data-lucide="loader-2" class="spin-icon"></i> Será movido para baixado em... ${countdownText}`;
       isDownloadedClass = 'is-downloading';
       btnDisabledAttribute = 'disabled';
     }
@@ -937,7 +979,7 @@ function updateActiveCountdowns() {
         if (button) {
           button.className = 'btn btn-card btn-download is-downloading';
           button.disabled = true;
-          button.innerHTML = `<i data-lucide="loader-2" class="spin-icon" style="width:14px; margin-right:4px;"></i> Liberando em ${countdownText}`;
+          button.innerHTML = `<i data-lucide="loader-2" class="spin-icon" style="width:14px; margin-right:4px;"></i> Será movido para baixado em... ${countdownText}`;
           lucide.createIcons();
         }
       }
