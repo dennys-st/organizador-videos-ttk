@@ -247,6 +247,54 @@ header {
   margin-bottom: 2.5rem;
 }
 
+/* User Stats Grid */
+.user-stats-grid {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.user-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  min-width: 120px;
+}
+
+.user-stat-name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.user-stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.user-stat-value.color-red {
+  color: #ff4757;
+}
+
+.user-stat-value.color-green {
+  color: #2ed573;
+}
+
+.user-stat-value.color-blue {
+  color: #1e90ff;
+}
+
 .stat-card {
   background: var(--bg-glass);
   border: 1px solid var(--border-glass);

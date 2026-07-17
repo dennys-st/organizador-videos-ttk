@@ -108,9 +108,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Setup All Event Listeners
 function setupEventListeners() {
   // Search and Filters change
-  elements.searchInput.addEventListener('input', debounce(loadAndRenderVideos, 300));
-  elements.platformFilter.addEventListener('change', loadAndRenderVideos);
-  elements.sortFilter.addEventListener('change', loadAndRenderVideos);
+  if (elements.searchInput) elements.searchInput.addEventListener('input', debounce(loadAndRenderVideos, 300));
+  if (elements.platformFilter) elements.platformFilter.addEventListener('change', loadAndRenderVideos);
+  if (elements.sortFilter) elements.sortFilter.addEventListener('change', loadAndRenderVideos);
 
   // Form Panel opening/closing
   const openPanel = () => {
@@ -527,24 +527,157 @@ async function loadAndRenderVideos() {
       { name: "Raimundo 1.mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2FRaimundo%201.mp4" }
     ];
 
-    for (const file of leticiaFiles) {
-      const existing = allVideos.find(v => v.title === file.name && v.user === 'user1');
+    for (let i = 0; i < leticiaFiles.length; i++) {
+      const file = leticiaFiles[i];
+      const expectedTitle = String(i + 1);
+      const existing = allVideos.find(v => v.downloadUrl === file.url && v.user === 'user1');
+      
+      const forcedDate = new Date();
+      forcedDate.setMinutes(forcedDate.getMinutes() - i);
+      const expectedCreatedAt = forcedDate.toISOString();
+
       if (!existing) {
+        const pubUrl = file.url.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
         const newVideo = {
-          title: file.name,
+          title: expectedTitle,
           description: '',
           platforms: ['tiktok'],
           user: 'user1',
           status: 'pending',
-          videoUrl: file.url,
+          videoUrl: pubUrl,
           capaUrl: '',
           downloadUrl: file.url,
-          createdAt: new Date().toISOString()
+          createdAt: expectedCreatedAt
         };
         await saveVideo(newVideo);
-      } else if (existing.description === 'Vídeo da pasta Letícia (Cloudflare Worker)') {
-        existing.description = '';
-        await saveVideo(existing);
+      } else {
+        let updated = false;
+        if (existing.videoUrl && existing.videoUrl.includes('videoflow-download.dennyssantosst.workers.dev')) {
+          existing.videoUrl = existing.videoUrl.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
+          updated = true;
+        }
+        if (existing.description === 'Vídeo da pasta Letícia (Cloudflare Worker)') {
+          existing.description = '';
+          updated = true;
+        }
+        if (existing.title !== expectedTitle) {
+          existing.title = expectedTitle;
+          updated = true;
+        }
+        if (existing.createdAt !== expectedCreatedAt) {
+          existing.createdAt = expectedCreatedAt;
+          updated = true;
+        }
+        if (updated) {
+          await saveVideo(existing);
+        }
+      }
+    }
+    
+    // --- Injetar arquivos da pasta Jaques no User 2 ---
+    const jaquesFiles = [
+      { name: "0716(28).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2F0716(28).mp4" },
+      { name: "0716(29).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2F0716(29).mp4" },
+      { name: "0716(30).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2F0716(30).mp4" },
+      { name: "0716(31).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2F0716(31).mp4" },
+      { name: "0716(32).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2F0716(32).mp4" },
+      { name: "antigo071s0710 0 (6)(1).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2Fantigo071s0710%200%20(6)(1).mp4" },
+      { name: "antigo071s0710 0 (6)(5).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Jaques%2Fantigo071s0710%200%20(6)(5).mp4" }
+    ];
+
+    for (let i = 0; i < jaquesFiles.length; i++) {
+      const file = jaquesFiles[i];
+      const expectedTitle = String(i + 1);
+      const existing = allVideos.find(v => v.downloadUrl === file.url && v.user === 'user2');
+      
+      const forcedDate = new Date();
+      forcedDate.setMinutes(forcedDate.getMinutes() - i);
+      const expectedCreatedAt = forcedDate.toISOString();
+
+      if (!existing) {
+        const pubUrl = file.url.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
+        const newVideo = {
+          title: expectedTitle,
+          description: '',
+          platforms: ['tiktok'],
+          user: 'user2',
+          status: 'pending',
+          videoUrl: pubUrl,
+          capaUrl: '',
+          downloadUrl: file.url,
+          createdAt: expectedCreatedAt
+        };
+        await saveVideo(newVideo);
+      } else {
+        let updated = false;
+        if (existing.videoUrl && existing.videoUrl.includes('videoflow-download.dennyssantosst.workers.dev')) {
+          existing.videoUrl = existing.videoUrl.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
+          updated = true;
+        }
+        if (existing.title !== expectedTitle) {
+          existing.title = expectedTitle;
+          updated = true;
+        }
+        if (existing.createdAt !== expectedCreatedAt) {
+          existing.createdAt = expectedCreatedAt;
+          updated = true;
+        }
+        if (updated) {
+          await saveVideo(existing);
+        }
+      }
+    }
+
+    // --- Injetar arquivos da pasta Isis no User 3 ---
+    const isisFiles = [
+      { name: "0716(10).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(10).mp4" },
+      { name: "0716(11).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(11).mp4" },
+      { name: "0716(12).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(12).mp4" },
+      { name: "0716(7).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(7).mp4" },
+      { name: "0716(8).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(8).mp4" },
+      { name: "0716(9).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Isis%2F0716(9).mp4" }
+    ];
+
+    for (let i = 0; i < isisFiles.length; i++) {
+      const file = isisFiles[i];
+      const expectedTitle = String(i + 1);
+      const existing = allVideos.find(v => v.downloadUrl === file.url && v.user === 'user3');
+      
+      const forcedDate = new Date();
+      forcedDate.setMinutes(forcedDate.getMinutes() - i);
+      const expectedCreatedAt = forcedDate.toISOString();
+      
+      if (!existing) {
+        const pubUrl = file.url.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
+        const newVideo = {
+          title: expectedTitle,
+          description: '',
+          platforms: ['tiktok'],
+          user: 'user3',
+          status: 'pending',
+          videoUrl: pubUrl,
+          capaUrl: '',
+          downloadUrl: file.url,
+          createdAt: expectedCreatedAt
+        };
+        await saveVideo(newVideo);
+      } else {
+        let updated = false;
+        if (existing.videoUrl && existing.videoUrl.includes('videoflow-download.dennyssantosst.workers.dev')) {
+          existing.videoUrl = existing.videoUrl.replace('https://videoflow-download.dennyssantosst.workers.dev', 'https://pub-fd82a145c5fd4448ad8db445275e1124.r2.dev');
+          updated = true;
+        }
+        if (existing.title !== expectedTitle) {
+          existing.title = expectedTitle;
+          updated = true;
+        }
+        if (existing.createdAt !== expectedCreatedAt) {
+          existing.createdAt = expectedCreatedAt;
+          updated = true;
+        }
+        if (updated) {
+          await saveVideo(existing);
+        }
       }
     }
     
@@ -580,6 +713,9 @@ async function loadAndRenderVideos() {
       console.error('Erro no sync com localStorage:', syncError);
     }
     
+    // Render stats specific to each user before filtering
+    renderUserStats(allVideos);
+    
     // Filter raw list by active user page route first
     if (currentUser !== 'geral') {
       allVideos = allVideos.filter(v => v && v.user === currentUser);
@@ -597,7 +733,7 @@ async function loadAndRenderVideos() {
     }
     
     // 2. Search query filter
-    const query = elements.searchInput.value.trim().toLowerCase();
+    const query = elements.searchInput ? elements.searchInput.value.trim().toLowerCase() : '';
     if (query) {
       filteredVideos = filteredVideos.filter(v => 
         v.title.toLowerCase().includes(query) || 
@@ -606,13 +742,13 @@ async function loadAndRenderVideos() {
     }
     
     // 3. Platform filter dropdown
-    const selectedPlatform = elements.platformFilter.value;
+    const selectedPlatform = elements.platformFilter ? elements.platformFilter.value : 'all';
     if (selectedPlatform !== 'all') {
       filteredVideos = filteredVideos.filter(v => v.platforms.includes(selectedPlatform));
     }
     
     // 4. Sort filter
-    const sortVal = elements.sortFilter.value;
+    const sortVal = elements.sortFilter ? elements.sortFilter.value : 'newest';
     if (sortVal === 'newest') {
       filteredVideos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (sortVal === 'scheduled') {
@@ -643,6 +779,52 @@ function updateStats(videos) {
   elements.statTotal.textContent = total;
   elements.statPending.textContent = pending;
   elements.statDownloaded.textContent = downloaded;
+}
+
+// Render pending video counts per user
+function renderUserStats(allVideos) {
+  const container = document.getElementById('user-stats-grid');
+  if (!container) return;
+  
+  // Apenas mostrar no dashboard geral
+  if (currentUser !== 'geral') {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'flex'; // ou grid se usar grid
+  
+  const users = [
+    { id: 'user1', name: 'Letícia' },
+    { id: 'user2', name: 'Jaques' },
+    { id: 'user3', name: 'Isis' }
+  ];
+  
+  let html = '';
+  
+  users.forEach(u => {
+    // Apenas vídeos locais (sem sourceWorker) pendentes para o usuário
+    const pendingCount = allVideos.filter(v => 
+      v && v.user === u.id && v.status === 'pending'
+    ).length;
+    
+    let colorClass = '';
+    if (pendingCount <= 3) {
+      colorClass = 'color-red';
+    } else if (pendingCount >= 4 && pendingCount <= 7) {
+      colorClass = 'color-green';
+    } else {
+      colorClass = 'color-blue';
+    }
+    
+    html += `
+      <div class="user-stat-card">
+        <span class="user-stat-name">${u.name}</span>
+        <span class="user-stat-value ${colorClass}">${pendingCount}</span>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
 }
 
 // Render video cards inside the grid
