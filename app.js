@@ -517,14 +517,13 @@ async function loadAndRenderVideos() {
 
     // --- TESTE SEGURO WORKER LETICIA: Injetar arquivos individuais no User 1 ---
     const leticiaFiles = [
-      { name: "0702 (1)(3).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(3).mp4" },
-      { name: "0702 (1)(4).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(4).mp4" },
-      { name: "0702 (1)(6).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(6).mp4" },
-      { name: "0702 (1)(8).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0702%20(1)(8).mp4" },
-      { name: "0710 (6)(1).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6)(1).mp4" },
-      { name: "0710 (6)(2).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6)(2).mp4" },
-      { name: "0710 (6).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0710%20(6).mp4" },
-      { name: "Raimundo 1.mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2FRaimundo%201.mp4" }
+      { name: "0716(1).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(1).mp4" },
+      { name: "0716(2).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(2).mp4" },
+      { name: "0716(3).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(3).mp4" },
+      { name: "0716(4).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(4).mp4" },
+      { name: "0716(5).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(5).mp4" },
+      { name: "0716(6).mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716(6).mp4" },
+      { name: "0716.mp4", url: "https://videoflow-download.dennyssantosst.workers.dev/Leticia%2F0716.mp4" }
     ];
 
     for (let i = 0; i < leticiaFiles.length; i++) {
@@ -677,6 +676,24 @@ async function loadAndRenderVideos() {
         }
         if (updated) {
           await saveVideo(existing);
+        }
+      }
+    }
+    
+    // --- LIMPEZA DE VÍDEOS EXCLUÍDOS DO CLOUDFLARE ---
+    // Remove os vídeos do banco local se eles não estiverem mais na lista atualizada
+    const currentInjectedUrls = [
+      ...leticiaFiles.map(f => f.url),
+      ...jaquesFiles.map(f => f.url),
+      ...isisFiles.map(f => f.url)
+    ];
+
+    for (const video of allVideos) {
+      if (['user1', 'user2', 'user3'].includes(video.user)) {
+        if (video.downloadUrl && video.downloadUrl.includes('workers.dev')) {
+          if (!currentInjectedUrls.includes(video.downloadUrl)) {
+            await deleteVideo(video.id);
+          }
         }
       }
     }
